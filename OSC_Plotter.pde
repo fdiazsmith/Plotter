@@ -5,7 +5,7 @@ OscP5 oscP5;
 NetAddress myRemoteLocation;
 JSONObject settings;
 
-Canvas canvas;
+Plotter plotter;
 
 // GLOBALS variables
 int PORT;
@@ -25,6 +25,7 @@ void settings( ){
   PORT = settings.getInt("port");
 
   size(size.getInt("width"), size.getInt("height"));
+
   // here we could add a check to see if the widht and height ar defined
   // go go full screen if they are not.
   // fullScreen( );
@@ -46,15 +47,18 @@ void settings( ){
 */
 void setup() {
   size(600, 600);
-  canvas = new Canvas( );
+  plotter = new Plotter( );
+  if (frame != null) {
+    surface.setResizable(true);
+  }
 }
 /**
 *
 * @method draw
 */
 void draw( ) {
-  clear();
-  canvas.update();
+  // clear();
+  plotter.update();
 }
 /**
 *
@@ -62,23 +66,37 @@ void draw( ) {
 * @params theOscMessage
 */
 void oscEvent(OscMessage theOscMessage) {
-  /* check if theOscMessage has the address pattern we are looking for. */
+  String addrPattern = theOscMessage.addrPattern();
 
-  if(theOscMessage.checkAddrPattern("/filter")==true) {
-    /* check if the typetag is the right one. */
-    println("matched filterd");
-    if(theOscMessage.checkTypetag("ifs")) {
-      println("\tmatched tags");
-      /* parse theOscMessage and extract the values from the osc message arguments. */
-      int firstValue = theOscMessage.get(0).intValue();
-      float secondValue = theOscMessage.get(1).floatValue();
-      String thirdValue = theOscMessage.get(2).stringValue();
-      print("### received an osc message /test with typetag ifs.");
-      println(" values: "+firstValue+", "+secondValue+", "+thirdValue);
-      return;
+  // Print address pattern to terminal
+
+  // Analogue input values
+  if (addrPattern.equals("/hrm")) {
+    for(int i = 0; i < plotter.analogInputs.length; i ++) {
+      plotter.analogInputs[i] = theOscMessage.get(i).floatValue();
     }
   }
-  println("### received an osc message. with address pattern "+theOscMessage.addrPattern());
+  else {
+    println(addrPattern);
+
+  }
+  // /* check if theOscMessage has the address pattern we are looking for. */
+  //
+  // if(theOscMessage.checkAddrPattern("/filter")==true) {
+  //   /* check if the typetag is the right one. */
+  //   println("matched filterd");
+  //   if(theOscMessage.checkTypetag("ifs")) {
+  //     println("\tmatched tags");
+  //     /* parse theOscMessage and extract the values from the osc message arguments. */
+  //     int firstValue = theOscMessage.get(0).intValue();
+  //     float secondValue = theOscMessage.get(1).floatValue();
+  //     String thirdValue = theOscMessage.get(2).stringValue();
+  //     print("### received an osc message /test with typetag ifs.");
+  //     println(" values: "+firstValue+", "+secondValue+", "+thirdValue);
+  //     return;
+  //   }
+  // }
+  // println("### received an osc message. with address pattern "+theOscMessage.addrPattern());
 }
 
 /**
@@ -86,7 +104,7 @@ void oscEvent(OscMessage theOscMessage) {
 * @method keyReleased
 */
 void keyReleased( ) {
-  canvas.released(key);
+  plotter.released(key);
 }
 
 /**
@@ -94,7 +112,7 @@ void keyReleased( ) {
 * @method keyPressed
 */
 void keyPressed( ) {
-  canvas.pressed(key);
+  plotter.pressed(key);
 }
 
 /**
@@ -102,14 +120,14 @@ void keyPressed( ) {
 * @method mouseMoved
 */
 void mouseMoved( ) {
-  canvas.mouseMoved();
+  plotter.mouseMoved();
 }
 /**
 *
 * @method mousePressed
 */
 void mousePressed() {
-  canvas.mousePressed();
+  plotter.mousePressed();
 }
 
 void sendOSC() {
