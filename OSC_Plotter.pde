@@ -10,6 +10,7 @@ Plotter plotter;
 // GLOBALS variables
 int PORT;
 String IP;
+String ADDRESS;
 
 /**
 * - useful to always have in a Pricessing day/
@@ -23,7 +24,7 @@ void settings( ){
   size = settings.getJSONObject("size");
   IP = settings.getString("IP");
   PORT = settings.getInt("port");
-
+  ADDRESS = settings.getString("address");
   size(size.getInt("width"), size.getInt("height"));
 
   // here we could add a check to see if the widht and height ar defined
@@ -47,7 +48,8 @@ void settings( ){
 */
 void setup() {
   size(600, 600);
-  plotter = new Plotter( );
+  int[] channels = {1, 2, 3, 4};
+  plotter = new Plotter( channels );
   if (frame != null) {
     surface.setResizable(true);
   }
@@ -68,35 +70,20 @@ void draw( ) {
 void oscEvent(OscMessage theOscMessage) {
   String addrPattern = theOscMessage.addrPattern();
 
-  // Print address pattern to terminal
 
   // Analogue input values
-  if (addrPattern.equals("/hrm")) {
+  if (addrPattern.equals(ADDRESS)) {
+    // println(addrPattern);
     for(int i = 0; i < plotter.analogInputs.length; i ++) {
       plotter.analogInputs[i] = theOscMessage.get(i).floatValue();
     }
   }
   else {
-    println(addrPattern);
+    // If it did not match print address.
+    println("This does not mach the pattern ",addrPattern);
 
   }
-  // /* check if theOscMessage has the address pattern we are looking for. */
-  //
-  // if(theOscMessage.checkAddrPattern("/filter")==true) {
-  //   /* check if the typetag is the right one. */
-  //   println("matched filterd");
-  //   if(theOscMessage.checkTypetag("ifs")) {
-  //     println("\tmatched tags");
-  //     /* parse theOscMessage and extract the values from the osc message arguments. */
-  //     int firstValue = theOscMessage.get(0).intValue();
-  //     float secondValue = theOscMessage.get(1).floatValue();
-  //     String thirdValue = theOscMessage.get(2).stringValue();
-  //     print("### received an osc message /test with typetag ifs.");
-  //     println(" values: "+firstValue+", "+secondValue+", "+thirdValue);
-  //     return;
-  //   }
-  // }
-  // println("### received an osc message. with address pattern "+theOscMessage.addrPattern());
+
 }
 
 /**
@@ -131,13 +118,13 @@ void mousePressed() {
 }
 
 void sendOSC() {
-  /* create a new osc message object */
-  OscMessage myMessage = new OscMessage("/test");
-
-  myMessage.add(123); /* add an int to the osc message */
-  myMessage.add(12.34); /* add a float to the osc message */
-  myMessage.add("some text"); /* add a string to the osc message */
-
-  /* send the message */
-  oscP5.send(myMessage, myRemoteLocation);
+  // /* create a new osc message object */
+  // OscMessage myMessage = new OscMessage("/test");
+  //
+  // myMessage.add(123); /* add an int to the osc message */
+  // myMessage.add(12.34); /* add a float to the osc message */
+  // myMessage.add("some text"); /* add a string to the osc message */
+  //
+  // /* send the message */
+  // oscP5.send(myMessage, myRemoteLocation);
 }

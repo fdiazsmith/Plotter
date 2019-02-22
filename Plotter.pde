@@ -10,6 +10,8 @@ class Plotter {
   float xPos = 0;
   int previousWidth, previousHeigth;  // used to detect window resize
   int[] selectedChannels;
+  boolean overlapChannels = true;
+
   /**
    * @contructor
    */
@@ -40,11 +42,39 @@ class Plotter {
    */
   void update( ) {
     // Trace analogue input values
+
     strokeWeight(1);  // trace width
-    stroke(255);      // trace colour
+    if(!overlapChannels){
+      stroke(255);      // trace colour
+    }
+
     for (int i = 0; i < selectedChannels.length; i++) {
-      float graphHeight = height / selectedChannels.length;
-      float yPos = map(analogInputs[selectedChannels[i] - 1], 0, 1, i * graphHeight + graphHeight, i * graphHeight);
+      float graphHeight;
+      float yPos;
+
+      if(overlapChannels){
+        if( i == 0){
+          stroke(255);
+        }
+        else if(i == 1){
+          stroke(255, 0,  0 );
+        }
+        else if(i == 2){
+          stroke(255, 233,  0 );
+
+        }
+        else if(i == 3){
+          stroke(0, 233,  30 );
+        }
+        graphHeight = height;
+        yPos = map(analogInputs[selectedChannels[i] - 1], 0, 1, 0 * graphHeight + graphHeight, 0 * graphHeight);
+      }
+      else{
+        graphHeight = height / selectedChannels.length;
+        yPos = map(analogInputs[selectedChannels[i] - 1], 0, 1, i * graphHeight + graphHeight, i * graphHeight);
+      }
+
+
       line(xPos, previousYPos[i], xPos+1, yPos);
       previousYPos[i] = yPos;
     }
@@ -63,8 +93,15 @@ class Plotter {
   void drawBackground() {
     strokeWeight(1);                          // rectangle border width
     PFont f = createFont("Arial", 16, true);  // Arial, 16 point, anti-aliasing on
+
     for (int i = 0; i < selectedChannels.length; i++) {
-      float graphHeight = height / selectedChannels.length;
+      float graphHeight;
+      if(overlapChannels){
+        graphHeight = height;
+      }
+      else{
+        graphHeight = height / selectedChannels.length;
+      }
 
       // Different rectangle border and fill colour for alternate graphs
       if(i % 2 == 0) {
@@ -75,12 +112,15 @@ class Plotter {
         stroke(32);
         fill(32);
       }
+
       rect(0, i * graphHeight, width, graphHeight);
 
-      // Print channel number
-      fill(64);
-      textFont(f, (int)graphHeight);
-      text(nf(selectedChannels[i], 1), 10, (i + 1) * graphHeight);
+      if(!overlapChannels){
+        // Print channel number
+        fill(64);
+        textFont(f, (int)graphHeight);
+        text(nf(selectedChannels[i], 1), 10, (i + 1) * graphHeight);
+      }
     }
   }
   /**
