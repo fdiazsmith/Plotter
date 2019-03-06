@@ -3,7 +3,7 @@
  *
  */
 class Plotter {
-  int foo = 0;
+
   color backgroundColor = color(255);
   float[] analogInputs;
   float[] previousYPos;
