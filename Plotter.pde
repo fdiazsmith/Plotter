@@ -51,13 +51,14 @@ class Plotter {
     for (int i = 0; i < selectedChannels.length; i++) {
       float graphHeight;
       float yPos;
-
+      background(analogInputs[selectedChannels[1] -1 ]*255, 0,0);
+      strokeWeight(5);
       if(overlapChannels){
         if( i == 0){
           stroke(255);
         }
         else if(i == 1){
-          stroke(255, 0,  0 );
+          stroke(255, 255,  255 );
         }
         else if(i == 2){
           stroke(255, 233,  0 );
