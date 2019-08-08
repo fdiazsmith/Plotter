@@ -24,6 +24,7 @@ void settings( ){
 */
 void setup() {
   size(600, 600);
+  frame.setResizable(true);
   canvas = new Canvas( );
 
 }
