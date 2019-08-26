@@ -10,3 +10,5 @@ data/*.jpg
 data/*.png
 
 **/*.zip
+
+.vscode/
